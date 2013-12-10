@@ -28,15 +28,15 @@
 #
 ###############################################################################
 
-rocommunity		<%= @snmp[:rocommunity] %>
+rocommunity		<%= @snmp['rocommunity'] %>
 
-sysDescr		<%= @snmp[:sysDescr] %>
-sysLocation		<%= @snmp[:sysLocation] %>
-sysContact		<%= @snmp[:sysContact] %>
-trapsink		<%= @snmp[:trapsink] %>
-linkUpDownNotifications	<%= @snmp[:linkUpDownNotifications] %>
-master			<%= @snmp[:master] %>
+sysDescr		<%= @snmp['sysDescr'] %>
+sysLocation		<%= @snmp['sysLocation'] %>
+sysContact		<%= @snmp['sysContact'] %>
+trapsink		<%= @snmp['trapsink'] %>
+linkUpDownNotifications	<%= @snmp['linkUpDownNotifications'] %>
+master			<%= @snmp['master'] %>
 
-<% for extend in @snmp[:extends] do -%>
+<% ( @snmp['extends'] || [] ).each do |extend| %>
 exec			<%= extend %>
 <% end -%>

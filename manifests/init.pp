@@ -80,23 +80,31 @@ class puppet_base {
   # @TODO move
   $snmp = { rocommunity => 'public', sysDescr => 'NexentaOS', sysLocation => '', sysContact => 'youremail@me.com', trapsink => 'localhost', linkUpDownNofitications => 'yes', master => 'agentx', extends => [] }
 
+  file { '/etc/snmp':
+    ensure => directory,
+  }
+
   # okk
   file { '/etc/snmp/snmpd.conf':
     ensure => file,
-    source => 'puppet:///modules/puppet_base/snmpd.conf.erb',
+    # source => 'puppet:///modules/puppet_base/snmpd.conf.erb',
+    content => template('puppet_base/snmpd.conf.erb'),
     owner => 'root',
     group => 'root',
     mode => '0644',
   }
 
+  # @TODO move
+  # defaults -- except nfs_server_versmax where default is 4,
+  # and nfs_client_versmax where default is 4
+  $nfs = { nfsd_listen_backlog => '64', nfsd_protocol => 'ALL', nfsd_servers => '1024', lockd_listen_backlog => '64', lockd_servers => '1024', lockd_retransmit_timeout => '5', grace_pediod => '90', nfs_server_versmax => '3', nfs_client_versmax => '3' }
+
   file { '/etc/default/nfs': 
     ensure => file,
-    source => 'puppet:///modules/puppet_base/nfs.erb',
+    content => template('puppet_base/nfs.erb'),
     owner => 'root',
     group => 'root',
     mode => '0444',
-    # variables,
-    # notifies,
   }
 
   # block create_nmv_log_attribute
@@ -129,7 +137,8 @@ class puppet_base {
   }
 
   # @TODO move
-  @authorized_keys = [ 'ssh-dss AAAA...== joe', 'ssh-dss AAAnasdfg...= jane' ]
+  $authorized_keys = [ 'ssh-dss AAAA...== joe', 'ssh-dss AAAnasdfg...= jane' ]
+
   file { '/root/.ssh/authorized_keys':
     path => '/root/.ssh/authorized_keys',
     ensure => present,
@@ -138,5 +147,8 @@ class puppet_base {
     group => 'root',
     content => template('puppet_base/authorized_keys.erb'),
   }
+
+  # notify { "hardware platform ${hardware_platform}": }
+  # notify { "nexenta version ${nexenta_version}": }
 
 }
