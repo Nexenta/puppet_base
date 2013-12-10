@@ -1,22 +1,35 @@
 
 class puppet_base {
 
-  file { '/root/trashy':
-    ensure => present,
-    content => 'grokin it.\n',
+  exec { 'restart_ntp':
+    command => 'svcadm refresh ntp',
+    path => '/',
   }
 
-  # get current nexentastor version
+  exec { 'restart_snmp':
+    command => 'svcadm disable snmpd; svcadm enable snmpd',
+    path => '/',
+  }
 
-  # custom plugin, memory
+  exec { 'restart_syslog':
+    command => 'svcadm refresh system-log',
+    path => '/',
+  }
 
-  # custom facter plugin for nexenta ( should include version of nexenta-stor )
+  exec { 'load_nfs_config':
+    command => 'perl -e "use NZA::Common;
+                      &NZA::netsvc->reread_config(\'svc:/network/nfs/server:default\');
+                      &NZA::netsvc->restart(\'svc:/network/nfs/server:default\');" ',
+    path => '/',
+  }
 
-  # nothing - command for restarting ntp
-  # nothing - command for restarting syslog
-  # nothing - command for restarting snmp
+  exec { 'enable_nfs':
+    command => 'perl -e "use NZA::Common;
+                      &NZA::netsvc->enable(\'svc:/network/nfs/server:default\');" ',
+    onlyif => $is_nfs_disabled,
+    path => '/',
+  }
 
-  # perl command to re-read nfs config
 
   file { '/etc/nsswitch.conf':
     path => '/etc/nsswitch.conf',
@@ -63,6 +76,7 @@ class puppet_base {
     owner => 'root',
     group => 'sys',
     mode => '0644',
+    notify => Exec['restart_syslog'],
   }
 
   # @TODO move
@@ -75,6 +89,7 @@ class puppet_base {
     owner => 'root',
     group => 'sys',
     mode => '0644',
+    notify => Exec['restart_ntp'],
   }
 
   # @TODO move
@@ -92,6 +107,7 @@ class puppet_base {
     owner => 'root',
     group => 'root',
     mode => '0644',
+    notify => Exec['restart_snmp'],
   }
 
   # @TODO move
@@ -105,6 +121,7 @@ class puppet_base {
     owner => 'root',
     group => 'root',
     mode => '0444',
+    notify => Exec['load_nfs_config'],
   }
 
   # block create_nmv_log_attribute
@@ -118,8 +135,6 @@ class puppet_base {
   # block create_ses_check_attribute
 
   # block ses_check_flapping
-
-  # perl enable_nfs
 
   # @TODO change and move
   $version = '4.0.0'
