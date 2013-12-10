@@ -44,42 +44,49 @@ class puppet_base {
     content => template('puppet_base/resolv.conf.erb'),
   }
 
+  # okk
   file { '/kernel/drv/scsi_vhci.conf':
     ensure => present,
-    mode => '0600',
-    group => sys,
-    owner => root,
+    mode => '0644',
+    group => 'sys',
+    owner => 'root',
     source => 'puppet:///modules/puppet_base/scsi_vhci.conf',
   }
 
+  # @TODO move
+  $loghosts = [ 'loghost1', 'loghost2' ]
+
+  # okk
   file { '/etc/syslog.conf':
-    ensure => file,
-    source => 'puppet:///modules/puppet_base/syslog.conf.erb',
+    ensure => present,
+    content => template('puppet_base/syslog.conf.erb'),
     owner => 'root',
     group => 'sys',
     mode => '0644',
-    # variables,
-    # notifies,
   }
 
+  # @TODO move
+  $timeservers = [ '0.pool.ntp.org', '1.pool.ntp.org' ]
+
+  # okk
   file { '/etc/inet/ntp.conf':
     ensure => present,
-    source => 'puppet:///modules/puppet_base/ntp.conf.erb',
+    content => template('puppet_base/ntp.conf.erb'),
     owner => 'root',
     group => 'sys',
     mode => '0644',
-    # variables,
-    # notifies,
   }
-   
+
+  # @TODO move
+  $snmp = { rocommunity => 'public', sysDescr => 'NexentaOS', sysLocation => '', sysContact => 'youremail@me.com', trapsink => 'localhost', linkUpDownNofitications => 'yes', master => 'agentx', extends => [] }
+
+  # okk
   file { '/etc/snmp/snmpd.conf':
     ensure => file,
     source => 'puppet:///modules/puppet_base/snmpd.conf.erb',
     owner => 'root',
     group => 'root',
     mode => '0644',
-    # variables,
-    # notifies,
   }
 
   file { '/etc/default/nfs': 
@@ -106,25 +113,30 @@ class puppet_base {
 
   # perl enable_nfs
 
-  # this is a template
+  # @TODO change and move
+  $version = '4.0.0'
+  $zfs_resilver_delay = '2' # default
+  $zfs_txg_synctime_ms = '5000' # default
+  $zfs_txg_timeout = '10' # default
+  $system_extra = { swapfs_minfree => '1048576', 'zfs:l2arc_write_boost' => '83886080' } # non-default
+
   file { '/etc/system':
-    path => '/etc/system',
-    ensure => file,
-    mode => 0755,
-    owner => root,
-    group => root,
-    source => 'puppet:///modules/puppet_base/nsswitch.conf',
-    # variables: version => current
+    ensure => present,
+    mode => '0755',
+    owner => 'root',
+    group => 'root',
+    content => template('puppet_base/system.erb'),
   }
 
+  # @TODO move
+  @authorized_keys = [ 'ssh-dss AAAA...== joe', 'ssh-dss AAAnasdfg...= jane' ]
   file { '/root/.ssh/authorized_keys':
     path => '/root/.ssh/authorized_keys',
     ensure => present,
     mode => '0600',
     owner => 'root',
     group => 'root',
-    source => 'puppet:///modules/puppet_base/nsswitch.conf',
-
+    content => template('puppet_base/authorized_keys.erb'),
   }
 
 }
