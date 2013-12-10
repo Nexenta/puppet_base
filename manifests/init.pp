@@ -150,5 +150,6 @@ class puppet_base {
 
   # notify { "hardware platform ${hardware_platform}": }
   # notify { "nexenta version ${nexenta_version}": }
+  # notify { "memory in megabytes ${memory_in_megabytes}": }
 
 }
