@@ -42,6 +42,12 @@ class puppet_base {
   } 
   $authorized_keys = [ 'ssh-dss AAAA...== joe', 'ssh-dss AAAnasdfg...= jane' ]
 
+  $nms = { ses_check_flapping_default => '2', # between 0 and 9.
+    nms_reporter_default => 'disable',
+  }
+  $logadm = { mnv_log_rotate_default => '10m' } # must be in the XXm format.
+  
+
   #
   # //////////////////////////////////////////////////////////////////////////
   #
