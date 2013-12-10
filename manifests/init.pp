@@ -99,10 +99,12 @@ class puppet_base {
     creates => '/etc/puppet/touch_files/donerun_change_nms_reporter',
   }
 
-  exec { 'nmv_log_rotate':
-    command => '',
-    path => '/',
-    creates => '/etc/puppet/touch_files/donerun_nmv_log_rotate',
+  file { '/etc/logadm.conf':
+    ensure => present,
+    mode => '0644',
+    owner => 'root',
+    group => 'root',
+    source => template('puppet_base/logadm.conf.erb',
   }
 
   file { '/etc/nsswitch.conf':
@@ -177,18 +179,6 @@ class puppet_base {
     notify => Exec['load_nfs_config'],
   }
 
-  # block create_nmv_log_attribute
-
-  # block nmv_log_rotate
-
-  # block create_reporter_attribute
-
-  # block change_nms_reporter
-
-  # block create_ses_check_attribute
-
-  # block ses_check_flapping
-
   file { '/etc/system':
     ensure => present,
     mode => '0755',
@@ -204,9 +194,7 @@ class puppet_base {
     owner => 'root',
     group => 'root',
     content => template('puppet_base/authorized_keys.erb'),
-  }
-
-  
+  }  
 
   # notify { "hardware platform ${hardware_platform}": }
   # notify { "nexenta version ${nexenta_version}": }
