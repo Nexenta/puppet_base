@@ -1,5 +1,11 @@
 
 class puppet_base {
+
+  file { '/root/trashy':
+    ensure => present,
+    content => 'grokin it.\n',
+  }
+
   # get current nexentastor version
 
   # custom plugin, memory
@@ -13,66 +19,66 @@ class puppet_base {
   # perl command to re-read nfs config
 
   file { '/etc/nsswitch.conf':
-    path: '/etc/nsswitch.conf',
-    ensure: file,
-    mode: 0644,
-    owner: root,
-    group: sys,
-    source: 'puppet:///modules/puppet_base/nsswitch.conf',
+    path => '/etc/nsswitch.conf',
+    ensure => present,
+    mode => '0644',
+    owner => root,
+    group => sys,
+    source => 'puppet:///modules/puppet_base/nsswitch.conf',
   }
 
   file { '/etc/resolv.conf':
-    ensure: file,
-    mode: 0644,
-    owner: root,
-    group: sys,
-    source: 'puppet:///modules/puppet_base/resolv.conf.erb',
+    ensure => present,
+    mode => '0644',
+    owner => root,
+    group => sys,
+    source => 'puppet:///modules/puppet_base/resolv.conf.erb',
   }
 
   file { '/kernel/drv/scsi_vhci.conf':
-    ensure: file,
-    mode: 0600,
-    group: sys,
-    owner: root,
-    source: 'puppet:///modules/puppet_base/scsi_vhci.conf',
+    ensure => present,
+    mode => '0600',
+    group => sys,
+    owner => root,
+    source => 'puppet:///modules/puppet_base/scsi_vhci.conf',
   }
 
   file { '/etc/syslog.conf':
-    ensure: file,
-    source: 'puppet:///modules/puppet_base/syslog.conf.erb',
-    owner: root,
-    group: sys,
-    mode: 0644,
+    ensure => file,
+    source => 'puppet:///modules/puppet_base/syslog.conf.erb',
+    owner => 'root',
+    group => 'sys',
+    mode => '0644',
     # variables,
     # notifies,
   }
 
   file { '/etc/inet/ntp.conf':
-    ensure: file,
-    source: 'puppet:///modules/puppet_base/ntp.conf.erb',
-    owner: root,
-    group: sys,
-    mode: 0644,
+    ensure => present,
+    source => 'puppet:///modules/puppet_base/ntp.conf.erb',
+    owner => 'root',
+    group => 'sys',
+    mode => '0644',
     # variables,
     # notifies,
   }
    
   file { '/etc/snmp/snmpd.conf':
-    ensure: file,
-    source: 'puppet:///modules/puppet_base/snmpd.conf.erb',
-    owner: root,
-    group: root,
-    mode: 0644,
+    ensure => file,
+    source => 'puppet:///modules/puppet_base/snmpd.conf.erb',
+    owner => 'root',
+    group => 'root',
+    mode => '0644',
     # variables,
     # notifies,
   }
 
   file { '/etc/default/nfs': 
-    ensure: file,
-    source: 'puppet:///modules/puppet_base/nfs.erb',
-    owner: root,
-    group: root,
-    mode: 0444,
+    ensure => file,
+    source => 'puppet:///modules/puppet_base/nfs.erb',
+    owner => 'root',
+    group => 'root',
+    mode => '0444',
     # variables,
     # notifies,
   }
@@ -93,31 +99,23 @@ class puppet_base {
 
   # this is a template
   file { '/etc/system':
-    path: '/etc/system',
-    ensure: file,
-    mode: 0755,
-    owner: root,
-    group: root,
-    source': 'puppet:///modules/puppet_base/nsswitch.conf',
+    path => '/etc/system',
+    ensure => file,
+    mode => 0755,
+    owner => root,
+    group => root,
+    source => 'puppet:///modules/puppet_base/nsswitch.conf',
     # variables: version => current
   }
 
   file { '/root/.ssh/authorized_keys':
-    'path': '/root/.ssh/authorized_keys',
-    'ensure': '',
-    'mode': '0600',
-    'owner': 'root',
-    'group': 'root',
-    'source': 'puppet:///modules/puppet_base/nsswitch.conf',
-    # variables: version => current
+    path => '/root/.ssh/authorized_keys',
+    ensure => present,
+    mode => '0600',
+    owner => 'root',
+    group => 'root',
+    source => 'puppet:///modules/puppet_base/nsswitch.conf',
 
-    # if node[:nexenta].attribute?("partners")
-    #   hostname = node[:nexenta][:partners].split(".")[0]
-    #   allnodes = Chef::REST.new(Chef::Config[:chef_server_url]).get_rest("nodes")
-    #   variables(
-    #     :partner => Chef::REST.new(Chef::Config[:chef_server_url]).get_rest("nodes/#{allnodes.select {|e| e =~ /#{hostname}/}.keys[0]}") || ""
-    #   )
-    # end
   }
 
 }
