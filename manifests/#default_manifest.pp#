@@ -1,8 +1,8 @@
 
 #
-# copyright notice
-# author
-# maintainer
+# copyright notice MIT license &copy; (c) 2013 Nexenta 
+# author Victor Piousbox <piousbox@gmail.com>
+# maintainer Victor Piousbox <piousbox@gmail.com>
 #
 
 class nexenta_base {
@@ -25,21 +25,64 @@ class nexenta_base {
     mode: 0644,
     owner: root,
     group: sys,
-    # @TODO change
-    source: nsswitch.conf,
+    source: 'nsswitch.conf',
   }
 
-  # file /etc/resolv.conf
+  file { '/etc/resolv.conf':
+    ensure: file,
+    mode: 0644,
+    owner: root,
+    group: sys,
+    source: 'resolv.conf.erb',
+  }
 
-  # file /kernel/drv/scsi_vhci.conf
+  file { '/kernel/drv/scsi_vhci.conf':
+    ensure: file,
+    mode: 0600,
+    group: sys,
+    owner: root,
+    source: 'scsi_vhci.conf',
+  }
 
-  # file/etc/syslog.conf
+  file { '/etc/syslog.conf':
+    ensure: file,
+    source: 'syslog.conf.erb',
+    owner: root,
+    group: sys,
+    mode: 0644,
+    # variables,
+    # notifies,
+  }
 
-  # file /etc/inet/ntp.conf
+  file { '/etc/inet/ntp.conf':
+    ensure: file,
+    source: 'ntp.conf.erb',
+    owner: root,
+    group: sys,
+    mode: 0644,
+    # variables,
+    # notifies,
+  }
+   
+  file { '/etc/snmp/snmpd.conf':
+    ensure: file,
+    source: 'snmpd.conf.erb',
+    owner: root,
+    group: root,
+    mode: 0644,
+    # variables,
+    # notifies,
+  }
 
-  # file /etc/snmp/snmpd.conf
-
-  # file /etc/default/nfs
+  file { '/etc/default/nfs': 
+    ensure: file,
+    source: 'nfs.erb',
+    owner: root,
+    group: root,
+    mode: 0444,
+    # variables,
+    # notifies,
+  }
 
   # block create_nmv_log_attribute
 
