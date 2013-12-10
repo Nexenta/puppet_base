@@ -22,17 +22,26 @@ class puppet_base {
     path => '/etc/nsswitch.conf',
     ensure => present,
     mode => '0644',
-    owner => root,
-    group => sys,
+    owner => 'root',
+    group => 'sys',
     source => 'puppet:///modules/puppet_base/nsswitch.conf',
   }
+
+  # @TODO this should be documented and placed somewhere else.
+  $nameservers = [ '10.2.3.4', '10.2.3.5' ]
+
+  # @TODO document and move this elsewhere?
+  $resolv_search = 'mgt.yourcompany.net prd.yourcompany.net'
+
+  # @TODO
+  $domainname = $hostname
 
   file { '/etc/resolv.conf':
     ensure => present,
     mode => '0644',
-    owner => root,
-    group => sys,
-    source => 'puppet:///modules/puppet_base/resolv.conf.erb',
+    owner => 'root',
+    group => 'sys',
+    content => template('puppet_base/resolv.conf.erb'),
   }
 
   file { '/kernel/drv/scsi_vhci.conf':
