@@ -43,9 +43,13 @@ class puppet_base {
   $authorized_keys = [ 'ssh-dss AAAA...== joe', 'ssh-dss AAAnasdfg...= jane' ]
 
   $nms = { ses_check_flapping_default => '2', # between 0 and 9.
+    ses_check_flapping_current => '0',
     nms_reporter_default => 'disable',
+    nms_reporter_current => 'enable',
   }
-  $logadm = { mnv_log_rotate_default => '10m' } # must be in the XXm format.
+  $logadm = { mnv_log_rotate_default => '10m', # must be in the XXm format.
+    nmv_log_totate_current => 0
+  }
   
 
   #
@@ -79,6 +83,26 @@ class puppet_base {
                       &NZA::netsvc->enable(\'svc:/network/nfs/server:default\');" ',
     onlyif => $is_nfs_disabled,
     path => '/',
+  }
+
+  exec { 'ses_check_flapping':
+    command => "nmc -c \" setup trigger ses-check property inval_anti_flapping -p ${nms['ses_check_flapping_default']} -y \";
+                touch /etc/puppet/touch_files/donerun_ses_check_flapping ",
+    path => '/',
+    creates => '/etc/puppet/touch_files/donerun_ses_check_flapping',
+  }
+
+  exec { 'change_nms_reporter':
+    command => 'nmc -c \"setup reporter ${} \";
+                touch /etc/puppet/touch_files/donerun_change_nms_reporter ',
+    path => '/',
+    creates => '/etc/puppet/touch_files/donerun_change_nms_reporter',
+  }
+
+  exec { 'nmv_log_rotate':
+    command => '',
+    path => '/',
+    creates => '/etc/puppet/touch_files/donerun_nmv_log_rotate',
   }
 
   file { '/etc/nsswitch.conf':
@@ -125,6 +149,12 @@ class puppet_base {
   }
 
   file { '/etc/snmp':
+    ensure => directory,
+  }
+
+  # touchfiles are a simple way of keeping track of which actions have been executed.
+  # overcomes the limitation of puppet variables being all static.
+  file { '/etc/puppet/touchfiles':
     ensure => directory,
   }
 
@@ -175,6 +205,8 @@ class puppet_base {
     group => 'root',
     content => template('puppet_base/authorized_keys.erb'),
   }
+
+  
 
   # notify { "hardware platform ${hardware_platform}": }
   # notify { "nexenta version ${nexenta_version}": }
