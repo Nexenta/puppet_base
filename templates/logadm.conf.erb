@@ -1,4 +1,4 @@
-#
+
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -54,4 +54,4 @@ smf_logs /var/svc/log/*.log -C 8 -s 1m -c
 /var/log/nms.log -c -C 9 -s 30m
 /var/log/nmcd.log -c -C 9 -s 30m
 /var/log/nmdtrace.log -c -C 9 -s 30m
-/var/log/nmv.log -C 2 -s <%= @logadm['mnv_log_rotate_default'] %>
+/var/log/nmv.log -C 2 -s <%= @logadm['mnv_log_rotate_default'] -%>

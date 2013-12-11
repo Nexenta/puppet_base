@@ -53,58 +53,69 @@ class puppet_base {
   
 
   #
-  # //////////////////////////////////////////////////////////////////////////
+  # ///// exec ///// 
   #
 
   exec { 'restart_ntp':
-    command => 'svcadm refresh ntp',
+    command => '/usr/sbin/svcadm refresh ntp',
     path => '/',
+    refreshonly => true,
   }
 
   exec { 'restart_snmp':
-    command => 'svcadm disable snmpd; svcadm enable snmpd',
+    command => '/usr/sbin/svcadm disable snmpd; svcadm enable snmpd',
     path => '/',
+    refreshonly => true,
   }
 
   exec { 'restart_syslog':
-    command => 'svcadm refresh system-log',
+    command => '/usr/sbin/svcadm refresh system-log',
     path => '/',
+    refreshonly => true,
   }
 
   exec { 'load_nfs_config':
-    command => 'perl -e "use NZA::Common;
+    command => '/usr/bin/perl -e "use NZA::Common;
                       &NZA::netsvc->reread_config(\'svc:/network/nfs/server:default\');
                       &NZA::netsvc->restart(\'svc:/network/nfs/server:default\');" ',
     path => '/',
+    refreshonly => true,
   }
 
   exec { 'enable_nfs':
-    command => 'perl -e "use NZA::Common;
+    command => '/usr/bin/perl -e "use NZA::Common;
                       &NZA::netsvc->enable(\'svc:/network/nfs/server:default\');" ',
     onlyif => $is_nfs_disabled,
     path => '/',
+    refreshonly => true,
   }
 
   exec { 'ses_check_flapping':
-    command => "nmc -c \" setup trigger ses-check property inval_anti_flapping -p ${nms['ses_check_flapping_default']} -y \";
+    command => "/usr/bin/nmc -c \" setup trigger ses-check property inval_anti_flapping -p ${nms['ses_check_flapping_default']} -y \";
                 touch /etc/puppet/touch_files/donerun_ses_check_flapping ",
     path => '/',
     creates => '/etc/puppet/touch_files/donerun_ses_check_flapping',
+    refreshonly => true,
   }
 
   exec { 'change_nms_reporter':
-    command => 'nmc -c \"setup reporter ${} \";
-                touch /etc/puppet/touch_files/donerun_change_nms_reporter ',
+    command => "/usr/bin/nmc -c \"setup reporter ${nms['nms_reporter_default']} \";
+                touch /etc/puppet/touch_files/donerun_change_nms_reporter ",
     path => '/',
     creates => '/etc/puppet/touch_files/donerun_change_nms_reporter',
+    # refreshonly => true,
   }
+
+  #
+  # ///// file /////
+  #
 
   file { '/etc/logadm.conf':
     ensure => present,
     mode => '0644',
     owner => 'root',
     group => 'root',
-    source => template('puppet_base/logadm.conf.erb',
+    content => template('puppet_base/logadm.conf.erb'),
   }
 
   file { '/etc/nsswitch.conf':
