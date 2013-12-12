@@ -57,53 +57,54 @@ class puppet_base {
   #
 
   exec { 'restart_ntp':
-    command => '/usr/sbin/svcadm refresh ntp',
-    path => '/',
+    command => 'svcadm refresh ntp',
+    path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
     refreshonly => true,
   }
 
   exec { 'restart_snmp':
-    command => '/usr/sbin/svcadm disable snmpd; svcadm enable snmpd',
-    path => '/',
+    command => 'svcadm disable snmpd; svcadm enable snmpd',
+    path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
     refreshonly => true,
   }
 
   exec { 'restart_syslog':
-    command => '/usr/sbin/svcadm refresh system-log',
-    path => '/',
+    command => 'svcadm refresh system-log',
+    path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
     refreshonly => true,
   }
 
   exec { 'load_nfs_config':
-    command => '/usr/bin/perl -e "use NZA::Common;
+    command => 'perl -e "use NZA::Common;
                       &NZA::netsvc->reread_config(\'svc:/network/nfs/server:default\');
                       &NZA::netsvc->restart(\'svc:/network/nfs/server:default\');" ',
-    path => '/',
+    path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
     refreshonly => true,
   }
 
   exec { 'enable_nfs':
-    command => '/usr/bin/perl -e "use NZA::Common;
+    command => 'perl -e "use NZA::Common;
                       &NZA::netsvc->enable(\'svc:/network/nfs/server:default\');" ',
     onlyif => $is_nfs_disabled,
-    path => '/',
+    path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
     refreshonly => true,
   }
 
   exec { 'ses_check_flapping':
-    command => "/usr/bin/nmc -c \" setup trigger ses-check property inval_anti_flapping -p ${nms['ses_check_flapping_default']} -y \";
-                touch /etc/puppet/touch_files/donerun_ses_check_flapping ",
-    path => '/',
-    creates => '/etc/puppet/touch_files/donerun_ses_check_flapping',
+    command => "nmc -c \" setup trigger ses-check property inval_anti_flapping -p ${nms['ses_check_flapping_default']} -y \";
+                touch /etc/puppet/touchfiles/donerun_ses_check_flapping ",
+    path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
+    creates => '/etc/puppet/touchfiles/donerun_ses_check_flapping',
     refreshonly => true,
   }
 
   exec { 'change_nms_reporter':
-    command => "/usr/bin/nmc -c \"setup reporter ${nms['nms_reporter_default']} \";
-                touch /etc/puppet/touch_files/donerun_change_nms_reporter ",
-    path => '/',
-    creates => '/etc/puppet/touch_files/donerun_change_nms_reporter',
+    command => "nmc -c \"setup reporter ${nms['nms_reporter_default']} \";
+                touch /etc/puppet/touchfiles/donerun_change_nms_reporter ",
+    path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
+    creates => '/etc/puppet/touchfiles/donerun_change_nms_reporter',
     # refreshonly => true,
+    logoutput => on_failure,
   }
 
   #
