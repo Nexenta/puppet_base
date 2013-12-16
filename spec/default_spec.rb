@@ -12,7 +12,10 @@ describe 'default manifest' do
   it 'files' do
     # /kernel/drv/scsi_vhci.conf
 
-    # ', '/etc/syslog.conf', '/etc/inet/ntp.conf', '/etc/snmp/snmpd.conf', '/etc/default/nfs', 
+    # /etc/syslog.conf
+    # /etc/inet/ntp.conf
+    # /etc/snmp/snmpd.conf
+    # /etc/default/nfs', 
 
     # heavy xfs config
     # /etc/system
@@ -22,9 +25,7 @@ describe 'default manifest' do
     ;
   end
 
-  it 'etc/nsswitch.conf, etc/resolv.conf' do
-    
-
+  it 'files' do
     @olds.each do |old|
       File.rename old, "#{old}-old"
     end
