@@ -17,7 +17,8 @@ describe 'default manifest' do
   end
 
   it 'files' do
-    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys', '/etc/system', '/etc/logadm.conf', '/etc/syslog.conf' ]
+    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys', '/etc/system', '/etc/logadm.conf', '/etc/syslog.conf',
+              '/etc/default/nfs' ]
     @olds.each { |old| File.rename old, "#{old}-old" }
     @olds.each { |old| File.exist?( old ).should eql false }
 
