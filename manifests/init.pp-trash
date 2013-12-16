@@ -108,8 +108,16 @@ class puppet_base {
   }
 
   #
-  # ///// files /////
+  # ///// file /////
   #
+
+  file { '/etc/logadm.conf':
+    ensure => present,
+    mode => '0644',
+    owner => 'root',
+    group => 'root',
+    content => template('puppet_base/logadm.conf.erb'),
+  }
 
   file { '/etc/nsswitch.conf':
     path => '/etc/nsswitch.conf',
@@ -127,7 +135,79 @@ class puppet_base {
     group => 'sys',
     content => template('puppet_base/resolv.conf.erb'),
   }
-  
+
+  file { '/kernel/drv/scsi_vhci.conf':
+    ensure => present,
+    mode => '0644',
+    group => 'sys',
+    owner => 'root',
+    source => 'puppet:///modules/puppet_base/scsi_vhci.conf',
+  }
+
+  file { '/etc/syslog.conf':
+    ensure => present,
+    content => template('puppet_base/syslog.conf.erb'),
+    owner => 'root',
+    group => 'sys',
+    mode => '0644',
+    notify => Exec['restart_syslog'],
+  }
+
+  file { '/etc/inet/ntp.conf':
+    ensure => present,
+    content => template('puppet_base/ntp.conf.erb'),
+    owner => 'root',
+    group => 'sys',
+    mode => '0644',
+    notify => Exec['restart_ntp'],
+  }
+
+  file { '/etc/snmp':
+    ensure => directory,
+  }
+
+  # touchfiles are a simple way of keeping track of which actions have been executed.
+  # overcomes the limitation of puppet variables being all static.
+  file { '/etc/puppet/touchfiles':
+    ensure => directory,
+  }
+
+  file { '/etc/snmp/snmpd.conf':
+    ensure => file,
+    # source => 'puppet:///modules/puppet_base/snmpd.conf.erb',
+    content => template('puppet_base/snmpd.conf.erb'),
+    owner => 'root',
+    group => 'root',
+    mode => '0644',
+    notify => Exec['restart_snmp'],
+  }
+
+  file { '/etc/default/nfs': 
+    ensure => file,
+    content => template('puppet_base/nfs.erb'),
+    owner => 'root',
+    group => 'root',
+    mode => '0444',
+    notify => Exec['load_nfs_config'],
+  }
+
+  file { '/etc/system':
+    ensure => present,
+    mode => '0755',
+    owner => 'root',
+    group => 'root',
+    content => template('puppet_base/system.erb'),
+  }
+
+  file { '/root/.ssh/authorized_keys':
+    path => '/root/.ssh/authorized_keys',
+    ensure => present,
+    mode => '0600',
+    owner => 'root',
+    group => 'root',
+    content => template('puppet_base/authorized_keys.erb'),
+  }  
+
   # notify { "hardware platform ${hardware_platform}": }
   # notify { "nexenta version ${nexenta_version}": }
   # notify { "memory in megabytes ${memory_in_megabytes}": }
