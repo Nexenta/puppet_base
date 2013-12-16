@@ -27,6 +27,8 @@ describe 'default manifest' do
     File.rename '/etc/nsswitch.conf', '/etc/nsswitch.conf-old'
     %x[ puppet agent --test ]
     File.exist?( '/etc/nsswitch.conf' ).should eql true
+    File.rm( '/etc/nsswitch.conf' )
+    File.rename '/etc/nsswitch.conf-old', '/etc/nsswitch.conf'
   end
 
 end
