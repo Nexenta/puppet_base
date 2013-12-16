@@ -8,7 +8,12 @@ describe 'default manifest' do
   end
 
   it 'files' do
-    # file_list = [ '/kernel/drv/scsi_vhci.conf', '/etc/syslog.conf', '/etc/inet/ntp.conf', '/etc/snmp/snmpd.conf', '/etc/default/nfs', '/etc/system', '/root/.ssh/authorized_keys' ]
+    # /kernel/drv/scsi_vhci.conf
+
+    # ', '/etc/syslog.conf', '/etc/inet/ntp.conf', '/etc/snmp/snmpd.conf', '/etc/default/nfs', 
+
+    # heavy xfs config
+    # /etc/system
   end
 
   it 'services' do
@@ -16,7 +21,7 @@ describe 'default manifest' do
   end
 
   it 'etc/nsswitch.conf, etc/resolv.conf' do
-    olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf' ]
+    olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys' ]
 
     olds.each do |old|
       File.rename old, "#{old}-old"
