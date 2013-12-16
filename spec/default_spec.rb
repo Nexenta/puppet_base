@@ -25,10 +25,11 @@ describe 'default manifest' do
 
   it 'files' do
     @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys', '/etc/system', '/etc/logadm.conf', '/etc/syslog.conf' ]
-
     @olds.each { |old| File.rename old, "#{old}-old" }
-
     @olds.each { |old| File.exist?( old ).should eql false }
+
+    @un_olds = files_that_otherwise_do_not_exist = [ '/etc/snmp/snmpd.conf' ]
+    @un_olds.each { |p| File.exist?( p ).should eql false }
 
     %x[ puppet agent --test ]
 
@@ -36,6 +37,11 @@ describe 'default manifest' do
       File.exist?( old ).should eql true
       File.delete( old )
       File.rename "#{old}-old", old
+    end
+    
+    @un_olds.each do |p|
+      File.exist?( p ).should eql true
+      File.delete( p )
     end
   end
 
