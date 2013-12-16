@@ -26,9 +26,9 @@ describe 'default manifest' do
   it 'files' do
     @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys', '/etc/system', '/etc/logadm.conf', '/etc/syslog.conf' ]
 
-    @olds.each do |old|
-      File.rename old, "#{old}-old"
-    end
+    @olds.each { |old| File.rename old, "#{old}-old" }
+
+    @olds.each { |old| File.exist?( old ).should eql false }
 
     %x[ puppet agent --test ]
 
