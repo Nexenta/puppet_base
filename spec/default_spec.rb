@@ -5,7 +5,7 @@ describe 'default manifest' do
 
   before :each do
     @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys' ]
-    @olds.each { |old| %x[ touch old ] }
+    @olds.each { |old| %x[ echo old && touch "old" ] }
 
   end
 
