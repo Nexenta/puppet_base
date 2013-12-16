@@ -24,7 +24,7 @@ describe 'default manifest' do
   end
 
   it 'files' do
-    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys' ]
+    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys', '/etc/system' ]
 
     @olds.each do |old|
       File.rename old, "#{old}-old"
