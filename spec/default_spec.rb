@@ -4,7 +4,7 @@ require 'spec_helper'
 describe 'default manifest' do
 
   before :each do
-    ;
+    %x[ touch "/root/.ssh/authorized_keys" ] unless File.exist?( '/root/.ssh/auithorized_keys' )
   end
 
   it 'files' do
