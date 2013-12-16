@@ -7,28 +7,28 @@ describe 'default manifest' do
     ;
   end
 
-  it 'sanity' do
-    true.should eql true
-  end
-
   it 'files' do
-    # file_list = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/kernel/drv/scsi_vhci.conf', '/etc/syslog.conf', '/etc/inet/ntp.conf',
-    #               '/etc/snmp/snmpd.conf', '/etc/default/nfs', '/etc/system', '/root/.ssh/authorized_keys' ]
-    # file_list.each { |f| File.delete( f ) if File.exist?( f ) }
-    # %x[ puppet agent --test ]
-    # file_list.each { |f| File.exist?( f ).should eql true }
+    # file_list = [ '/kernel/drv/scsi_vhci.conf', '/etc/syslog.conf', '/etc/inet/ntp.conf', '/etc/snmp/snmpd.conf', '/etc/default/nfs', '/etc/system', '/root/.ssh/authorized_keys' ]
   end
 
   it 'services' do
     ;
   end
 
-  it 'etc nsswitch.conf' do
-    File.rename '/etc/nsswitch.conf', '/etc/nsswitch.conf-old'
+  it 'etc/nsswitch.conf, etc/resolv.conf' do
+    olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf' ]
+
+    olds.each do |old|
+      File.rename old, "#{old}-old"
+    end
+
     %x[ puppet agent --test ]
-    File.exist?( '/etc/nsswitch.conf' ).should eql true
-    File.delete( '/etc/nsswitch.conf' )
-    File.rename '/etc/nsswitch.conf-old', '/etc/nsswitch.conf'
+
+    olds.each do |old|
+      File.exist?( old ).should eql true
+      File.delete( old )
+      File.rename "#{old}-old", old
+    end
   end
 
 end
