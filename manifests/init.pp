@@ -18,7 +18,7 @@ class puppet_base {
   $nameservers = [ '10.2.3.4', '10.2.3.5' ]
   $resolv_search = 'mgt.yourcompany.net prd.yourcompany.net'
   $domainname = $hostname
-  $loghosts = [ 'loghost1', 'loghost2' ]
+  $loghosts = [ 'localhost', 'localhost' ]
 
   # defaults -- except nfs_server_versmax where default is 4,
   # and nfs_client_versmax where default is 4
@@ -57,7 +57,7 @@ class puppet_base {
   #
 
   exec { 'restart_ntp':
-    command => 'svcadm refresh ntp',
+    command => 'touch /root/restarted_ntp; svcadm refresh ntp',
     path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
     refreshonly => true,
   }
@@ -67,6 +67,10 @@ class puppet_base {
     path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
     refreshonly => true,
   }
+  notify { 'snmp restarted':
+    message => '+++ +++ snmp restarted',
+  }
+  Exec['restart_snmp'] -> Notify['snmp restarted']
 
   exec { 'restart_syslog':
     command => 'svcadm refresh system-log',
@@ -79,6 +83,7 @@ class puppet_base {
                       &NZA::netsvc->reread_config(\'svc:/network/nfs/server:default\');
                       &NZA::netsvc->restart(\'svc:/network/nfs/server:default\');" ',
     path => [ '/usr/bin', '/bin/', '/sbin', '/usr/sbin' ],
+    returns => [ 0, 11 ],
     refreshonly => true,
   }
 
