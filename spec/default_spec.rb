@@ -12,6 +12,10 @@ describe 'default manifest' do
 
   end
 
+  after :each do 
+    %x[ echo "+++ +++ after each yo" ]
+  end
+
   it 'services' do
     ;
   end
