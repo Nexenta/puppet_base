@@ -4,9 +4,7 @@ require 'spec_helper'
 describe 'default manifest' do
 
   before :each do
-    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys' ]
-    @olds.each { |old| %x[ echo "+++ +++ touching old" && touch old ] }
-
+    ;
   end
 
   it 'files' do
@@ -26,6 +24,8 @@ describe 'default manifest' do
   end
 
   it 'files' do
+    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys' ]
+
     @olds.each do |old|
       File.rename old, "#{old}-old"
     end
