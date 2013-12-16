@@ -4,7 +4,9 @@ require 'spec_helper'
 describe 'default manifest' do
 
   before :each do
-    ;
+    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys' ]
+    @olds.each { |old| %x[ touch old ] }
+
   end
 
   it 'files' do
@@ -21,15 +23,15 @@ describe 'default manifest' do
   end
 
   it 'etc/nsswitch.conf, etc/resolv.conf' do
-    olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys' ]
+    
 
-    olds.each do |old|
+    @olds.each do |old|
       File.rename old, "#{old}-old"
     end
 
     %x[ puppet agent --test ]
 
-    olds.each do |old|
+    @olds.each do |old|
       File.exist?( old ).should eql true
       File.delete( old )
       File.rename "#{old}-old", old
