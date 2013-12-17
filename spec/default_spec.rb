@@ -6,14 +6,17 @@ describe 'default manifest' do
   before :each do
     %x[ touch "/root/.ssh/authorized_keys" ] unless File.exist?( '/root/.ssh/auithorized_keys' )
 
-    # /kernel/drv/scsi_vhci.conf
-    # /etc/inet/ntp.conf
-    # /etc/default/nfs
-
+    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys', '/etc/system', '/etc/logadm.conf', '/etc/syslog.conf',
+              '/etc/default/nfs', '/kernel/drv/scsi_vhci.conf', '/etc/inet/ntp.conf' ]
   end
 
   after :each do 
     %x[ echo "+++ +++ after each yo" ]
+    @olds.each do |old|
+      if File.exist?( "#{old}-old" )
+        File.rename "#{old}-old", old 
+      end
+    end
   end
 
   it 'services' do
@@ -21,8 +24,6 @@ describe 'default manifest' do
   end
 
   it 'files' do
-    @olds = [ '/etc/nsswitch.conf', '/etc/resolv.conf', '/root/.ssh/authorized_keys', '/etc/system', '/etc/logadm.conf', '/etc/syslog.conf',
-              '/etc/default/nfs', '/kernel/drv/scsi_vhci.conf', '/etc/inet/ntp.conf' ]
     @olds.each { |old| File.rename old, "#{old}-old" }
     @olds.each { |old| File.exist?( old ).should eql false }
 
@@ -34,7 +35,7 @@ describe 'default manifest' do
     @olds.each do |old|
       File.exist?( old ).should eql true
       File.delete( old )
-      File.rename "#{old}-old", old
+      # File.rename "#{old}-old", old
     end
     
     @un_olds.each do |p|
