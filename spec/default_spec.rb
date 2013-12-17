@@ -11,7 +11,6 @@ describe 'default manifest' do
   end
 
   after :each do 
-    %x[ echo "+++ +++ after each yo" ]
     @olds.each do |old|
       if File.exist?( "#{old}-old" )
         File.rename "#{old}-old", old 
